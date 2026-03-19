@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Bot Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .students-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .students-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .student-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .student-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .student-age {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .student-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .student-stat {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .student-stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .student-stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .refresh-btn:hover {
+            background: #764ba2;
+        }
+        
+        .last-update {
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Teacher Bot Dashboard</h1>
+            <p>Real-time monitoring & analytics</p>
+        </div>
+        
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <h3>👥 Total Students</h3>
+                <div class="stat-value" id="totalStudents">-</div>
+                <div class="stat-label">Registered students</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>💬 Total Questions</h3>
+                <div class="stat-value" id="totalQuestions">-</div>
+                <div class="stat-label">All time questions</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>💰 Total Revenue</h3>
+                <div class="stat-value" id="totalRevenue">-</div>
+                <div class="stat-label">UAH earned</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>🔥 Active Today</h3>
+                <div class="stat-value" id="activeToday">-</div>
+                <div class="stat-label">Students today</div>
+            </div>
+        </div>
+        
+        <div class="students-section">
+            <h2>Students Overview</h2>
+            <div id="studentsList">
+                <div class="loading">Loading data...</div>
+            </div>
+            
+            <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+            <div class="last-update" id="lastUpdate"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'https://api.github.com/repos/handymangoldhands/teacher-bot-data/contents/stats.json';
+        
+        async function loadData() {
+            try {
+                document.getElementById('studentsList').innerHTML = '<div class="loading">Loading data...</div>';
+                
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // Decode base64 content
+                const content = JSON.parse(atob(data.content));
+                
+                // Update stats
+                document.getElementById('totalStudents').textContent = content.total_students || 0;
+                document.getElementById('totalQuestions').textContent = content.total_questions || 0;
+                document.getElementById('totalRevenue').textContent = (content.total_revenue || 0) + ' грн';
+                document.getElementById('activeToday').textContent = content.active_today || 0;
+                
+                // Render students
+                const studentsHtml = content.students.map(student => {
+                    const progressPercent = Math.min(100, (student.questions_asked / 50) * 100);
+                    const revenue = student.questions_asked * 10;
+                    
+                    return `
+                        <div class="student-card">
+                            <div class="student-header">
+                                <div class="student-name">${student.name}</div>
+                                <div class="student-age">${student.age} years old</div>
+                            </div>
+                            
+                            <div class="student-stats">
+                                <div class="student-stat">
+                                    <div class="student-stat-value">${student.questions_asked}</div>
+                                    <div class="student-stat-label">Questions</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="student-stat-value">${revenue} грн</div>
+                                    <div class="student-stat-label">Revenue</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="student-stat-value">${student.last_active || 'Never'}</div>
+                                    <div class="student-stat-label">Last Active</div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progressPercent}%">
+                                    ${progressPercent.toFixed(0)}%
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('studentsList').innerHTML = studentsHtml || '<p style="text-align:center;color:#999;">No students yet</p>';
+                document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleString('ru-RU')}`;
+                
+            } catch (error) {
+                document.getElementById('studentsList').innerHTML = `
+                    <div class="error">
+                        ❌ Error loading data: ${error.message}
+                        <br><br>
+                        Make sure stats.json is uploaded to GitHub repository.
+                    </div>
+                `;
+            }
+        }
+        
+        // Load data on page load
+        loadData();
+        
+        // Auto-refresh every 60 seconds
+        setInterval(loadData, 60000);
+    </script>
+</body>
+</html>
