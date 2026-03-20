@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Avatar Intensive — Nastya</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI-аватар Интенсив — Создай цифрового себя за вечер</title>
+  <meta name="description" content="Интенсив по созданию AI-видео аватаров. HeyGen, ElevenLabs, Adobe Podcast. Всего $18. Уроки сразу после оплаты."/>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
     :root {
-      --neon: #00f0ff;
-      --neon2: #a855f7;
-      --neon3: #f0f;
-      --bg: #050510;
-      --surface: rgba(255,255,255,0.04);
-      --border: rgba(0,240,255,0.15);
+      --neon: #00f5ff;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --bg: #04040f;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(0,245,255,0.12);
       --text: #e8eaf6;
       --muted: #6b7280;
+      --white: #ffffff;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -27,595 +31,676 @@
       overflow-x: hidden;
     }
 
-    /* ── STARS ── */
-    #stars {
+    /* ─── BG EFFECTS ─── */
+    .bg-fixed {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      overflow: hidden;
     }
-    .star {
-      position: absolute;
-      border-radius: 50%;
-      background: #fff;
-      animation: twinkle linear infinite;
+    .bg-grid {
+      background-image:
+        linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      width: 100%; height: 100%;
     }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.1; transform: scale(1); }
-      50% { opacity: 0.9; transform: scale(1.4); }
-    }
-
-    /* ── GLOW ORBS ── */
     .orb {
       position: fixed;
       border-radius: 50%;
-      filter: blur(120px);
+      filter: blur(140px);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.18;
-      animation: drift 18s ease-in-out infinite alternate;
+      animation: orbDrift 20s ease-in-out infinite alternate;
     }
-    .orb1 { width: 600px; height: 600px; background: var(--neon2); top: -200px; right: -100px; }
-    .orb2 { width: 500px; height: 500px; background: var(--neon); bottom: -150px; left: -100px; animation-delay: -9s; }
-    @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px, 60px); } }
+    .orb-tl { width:700px; height:700px; background:rgba(168,85,247,0.15); top:-300px; left:-200px; }
+    .orb-br { width:600px; height:600px; background:rgba(0,245,255,0.1); bottom:-200px; right:-150px; animation-delay:-10s; }
+    @keyframes orbDrift { to { transform: translate(50px,80px); } }
 
-    /* ── LAYOUT ── */
-    .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    /* ─── STARS ─── */
+    #stars { position:fixed; inset:0; z-index:0; pointer-events:none; }
+    .star {
+      position:absolute; border-radius:50%; background:#fff;
+      animation: twinkle linear infinite;
+    }
+    @keyframes twinkle {
+      0%,100%{ opacity:.08; transform:scale(1); }
+      50%{ opacity:.7; transform:scale(1.5); }
+    }
 
-    /* ── NAV ── */
+    /* ─── LAYOUT ─── */
+    .z1 { position:relative; z-index:1; }
+    .wrap { max-width:1100px; margin:0 auto; padding:0 24px; }
+    section { padding:100px 0; }
+
+    /* ─── NAV ─── */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(20px);
-      background: rgba(5,5,16,0.8);
+      position: sticky; top:0; z-index:100;
+      backdrop-filter: blur(24px);
+      background: rgba(4,4,15,0.85);
       border-bottom: 1px solid var(--border);
-      padding: 16px 0;
     }
-    nav .wrap { display: flex; align-items: center; justify-content: space-between; }
+    nav .inner { display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1100px; margin:0 auto; }
     .logo {
-      font-size: 20px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--neon), var(--neon2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -0.5px;
+      font-size:18px; font-weight:800; letter-spacing:-0.5px;
+      background: linear-gradient(135deg, var(--neon), var(--purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .nav-cta {
-      background: linear-gradient(135deg, var(--neon), var(--neon2));
-      color: #000;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 10px 24px;
-      border-radius: 100px;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
+    .logo span { opacity:.5; font-weight:400; }
+    .nav-btn {
+      background: linear-gradient(135deg, var(--neon), var(--purple));
+      color:#000; font-weight:700; font-size:14px;
+      padding:10px 22px; border-radius:100px; text-decoration:none;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 0 20px rgba(0,245,255,0.2);
     }
-    .nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0,240,255,0.4); }
+    .nav-btn:hover { transform:scale(1.05); box-shadow:0 0 40px rgba(0,245,255,0.4); }
 
-    /* ── HERO ── */
-    .hero {
-      padding: 120px 0 80px;
-      text-align: center;
+    /* ─── HERO ─── */
+    .hero { padding:130px 0 80px; text-align:center; }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(0,245,255,0.07); border:1px solid var(--border);
+      border-radius:100px; padding:7px 20px;
+      font-size:13px; color:var(--neon); font-weight:500;
+      margin-bottom:36px;
+      animation: fadeUp .8s ease both;
     }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0,240,255,0.08);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 6px 18px;
-      font-size: 13px;
-      color: var(--neon);
-      margin-bottom: 32px;
-      animation: fadeUp 0.8s ease both;
+    .live-dot {
+      width:7px; height:7px; background:var(--neon); border-radius:50%;
+      box-shadow:0 0 10px var(--neon);
+      animation:livePulse 1.5s ease infinite;
     }
-    .badge-dot {
-      width: 7px; height: 7px;
-      background: var(--neon);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--neon);
-      animation: pulse 2s ease infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    @keyframes livePulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 
     .hero h1 {
-      font-size: clamp(40px, 7vw, 80px);
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -2px;
-      margin-bottom: 24px;
-      animation: fadeUp 0.8s 0.1s ease both;
+      font-size: clamp(42px,7.5vw,88px);
+      font-weight:900; line-height:1.0; letter-spacing:-3px;
+      margin-bottom:28px;
+      animation: fadeUp .8s .1s ease both;
     }
-    .hero h1 .glow {
-      background: linear-gradient(135deg, var(--neon) 0%, var(--neon2) 50%, var(--neon3) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 30px rgba(0,240,255,0.5));
+    .hero h1 em {
+      font-style:normal;
+      background: linear-gradient(135deg, var(--neon) 0%, var(--purple) 50%, var(--pink) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     }
-    .hero p {
-      font-size: 18px;
-      color: var(--muted);
-      max-width: 600px;
-      margin: 0 auto 48px;
-      line-height: 1.7;
-      animation: fadeUp 0.8s 0.2s ease both;
+    .hero-sub {
+      font-size:clamp(16px,2vw,20px); color:var(--muted); line-height:1.7;
+      max-width:580px; margin:0 auto 52px;
+      animation: fadeUp .8s .2s ease both;
     }
-    .hero-actions {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-      animation: fadeUp 0.8s 0.3s ease both;
+    .hero-sub strong { color:var(--text); }
+    .hero-cta-row {
+      display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+      animation: fadeUp .8s .3s ease both;
     }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: linear-gradient(135deg, var(--neon), var(--neon2));
-      color: #000;
-      font-weight: 800;
-      font-size: 16px;
-      padding: 16px 36px;
-      border-radius: 100px;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 40px rgba(0,240,255,0.25);
+    .cta-main {
+      display:inline-flex; align-items:center; gap:12px;
+      background: linear-gradient(135deg, var(--neon), var(--purple));
+      color:#000; font-weight:800; font-size:17px;
+      padding:18px 40px; border-radius:100px; text-decoration:none;
+      box-shadow: 0 0 50px rgba(0,245,255,0.3);
+      transition: transform .2s, box-shadow .2s;
     }
-    .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 60px rgba(0,240,255,0.5); }
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-weight: 600;
-      font-size: 16px;
-      padding: 16px 36px;
-      border-radius: 100px;
-      text-decoration: none;
-      backdrop-filter: blur(10px);
-      transition: border-color 0.2s, background 0.2s;
+    .cta-main:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 0 80px rgba(0,245,255,0.5); }
+    .cta-ghost {
+      display:inline-flex; align-items:center; gap:10px;
+      background:var(--card); border:1px solid var(--border);
+      color:var(--text); font-weight:600; font-size:17px;
+      padding:18px 36px; border-radius:100px; text-decoration:none;
+      backdrop-filter:blur(10px);
+      transition: border-color .2s;
     }
-    .btn-secondary:hover { border-color: var(--neon); background: rgba(0,240,255,0.06); }
+    .cta-ghost:hover { border-color:var(--neon); }
 
-    /* ── STATS ROW ── */
-    .stats-row {
-      display: flex;
-      justify-content: center;
-      gap: 48px;
-      flex-wrap: wrap;
-      padding: 60px 0;
+    .hero-note {
+      margin-top:28px; font-size:14px; color:var(--muted);
+      animation: fadeUp .8s .4s ease both;
+    }
+    .hero-note span { color:var(--neon); }
+
+    /* ─── SOCIAL PROOF ─── */
+    .proof-bar {
+      background: var(--card);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      margin-bottom: 100px;
+      padding:28px 0;
+      margin-bottom:0;
     }
-    .stat { text-align: center; }
-    .stat-num {
-      font-size: 40px;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--neon), var(--neon2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -1px;
+    .proof-inner {
+      display:flex; justify-content:center; align-items:center;
+      gap:48px; flex-wrap:wrap;
     }
-    .stat-label { font-size: 14px; color: var(--muted); margin-top: 4px; }
+    .proof-item { text-align:center; }
+    .proof-num {
+      font-size:32px; font-weight:900;
+      background: linear-gradient(135deg,var(--neon),var(--purple));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      letter-spacing:-1px;
+    }
+    .proof-label { font-size:13px; color:var(--muted); margin-top:2px; }
 
-    /* ── SECTION HEADING ── */
-    .section { margin-bottom: 100px; }
-    .section-tag {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: var(--neon);
-      text-transform: uppercase;
-      margin-bottom: 16px;
+    /* ─── PAIN / HOOK ─── */
+    .hook-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap:20px;
     }
-    .section h2 {
-      font-size: clamp(28px, 4vw, 48px);
-      font-weight: 900;
-      letter-spacing: -1px;
-      line-height: 1.1;
-      margin-bottom: 16px;
+    .hook-card {
+      background:var(--card); border:1px solid rgba(255,255,255,0.07);
+      border-radius:20px; padding:32px;
+      backdrop-filter:blur(10px);
     }
-    .section .sub {
-      font-size: 17px;
-      color: var(--muted);
-      max-width: 540px;
-      line-height: 1.7;
-      margin-bottom: 48px;
-    }
+    .hook-card .emoji { font-size:32px; margin-bottom:16px; display:block; }
+    .hook-card h3 { font-size:17px; font-weight:700; margin-bottom:10px; }
+    .hook-card p { font-size:14px; color:var(--muted); line-height:1.65; }
 
-    /* ── LESSONS GRID ── */
-    .lessons-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
+    /* ─── WHAT YOU GET ─── */
+    .get-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+      gap:24px;
     }
-    .lesson-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-      backdrop-filter: blur(10px);
+    .get-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:24px; padding:36px;
+      position:relative; overflow:hidden;
+      backdrop-filter:blur(12px);
+      transition: transform .3s, box-shadow .3s, border-color .3s;
     }
-    .lesson-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      background: linear-gradient(135deg, rgba(0,240,255,0.06), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
+    .get-card:hover { transform:translateY(-8px); border-color:var(--neon); box-shadow:0 20px 60px rgba(0,245,255,0.1); }
+    .get-card::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(0,245,255,0.05),transparent);
+      opacity:0; transition:opacity .3s;
     }
-    .lesson-card:hover { transform: translateY(-6px); border-color: var(--neon); box-shadow: 0 0 40px rgba(0,240,255,0.1); }
-    .lesson-card:hover::before { opacity: 1; }
-    .lesson-num {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--neon);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
+    .get-card:hover::after { opacity:1; }
+    .get-num {
+      font-size:12px; font-weight:700; letter-spacing:3px;
+      color:var(--neon); text-transform:uppercase; margin-bottom:20px;
     }
-    .lesson-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-    .lesson-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
-    .lesson-icon {
-      font-size: 36px;
-      margin-bottom: 20px;
-      display: block;
+    .get-icon { font-size:44px; margin-bottom:20px; display:block; }
+    .get-card h3 { font-size:22px; font-weight:800; margin-bottom:12px; letter-spacing:-.5px; }
+    .get-card p { font-size:15px; color:var(--muted); line-height:1.7; }
+    .get-tag {
+      display:inline-block; margin-top:20px;
+      background:rgba(0,245,255,0.1); border:1px solid rgba(0,245,255,0.2);
+      color:var(--neon); font-size:12px; font-weight:700;
+      padding:5px 14px; border-radius:100px; letter-spacing:.5px;
     }
-    .lesson-time {
-      margin-top: 20px;
-      font-size: 13px;
-      color: var(--neon2);
-      font-weight: 600;
+    .get-tag.purple {
+      background:rgba(168,85,247,0.1); border-color:rgba(168,85,247,0.2);
+      color:var(--purple);
     }
 
-    /* ── TOOLS GRID ── */
-    .tools-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
+    /* ─── HOW IT WORKS ─── */
+    .steps { display:flex; flex-direction:column; gap:0; max-width:700px; margin:0 auto; }
+    .step {
+      display:flex; gap:28px; align-items:flex-start;
+      padding:32px 0;
+      border-bottom:1px solid var(--border);
     }
-    .tool-pill {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 12px 24px;
-      font-size: 15px;
-      font-weight: 500;
-      backdrop-filter: blur(10px);
-      transition: border-color 0.2s, background 0.2s;
+    .step:last-child { border-bottom:none; }
+    .step-num {
+      width:52px; height:52px; flex-shrink:0;
+      background:linear-gradient(135deg,var(--neon),var(--purple));
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:18px; font-weight:900; color:#000;
     }
-    .tool-pill:hover { border-color: var(--neon2); background: rgba(168,85,247,0.06); }
-    .tool-pill span { font-size: 20px; }
+    .step-body h3 { font-size:20px; font-weight:800; margin-bottom:8px; }
+    .step-body p { font-size:15px; color:var(--muted); line-height:1.65; }
 
-    /* ── PRICE CARD ── */
-    .price-wrap { display: flex; justify-content: center; }
-    .price-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 48px;
-      max-width: 480px;
-      width: 100%;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(20px);
+    /* ─── TOOLS ─── */
+    .tools-flex { display:flex; flex-wrap:wrap; gap:14px; }
+    .tool-badge {
+      display:flex; align-items:center; gap:10px;
+      background:var(--card); border:1px solid rgba(255,255,255,0.08);
+      border-radius:16px; padding:14px 22px;
+      font-size:15px; font-weight:600;
+      backdrop-filter:blur(10px);
+      transition: border-color .2s, background .2s, transform .2s;
     }
-    .price-card::before {
-      content: '';
-      position: absolute;
-      top: -2px; left: -2px; right: -2px; bottom: -2px;
-      border-radius: 30px;
-      background: linear-gradient(135deg, var(--neon), var(--neon2), var(--neon3));
-      z-index: -1;
-    }
-    .price-card::after {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      background: #0a0a1a;
-      border-radius: 27px;
-      z-index: -1;
-    }
-    .price-label { font-size: 13px; letter-spacing: 3px; color: var(--neon); text-transform: uppercase; margin-bottom: 16px; font-weight: 700; }
-    .price-amount {
-      font-size: 72px;
-      font-weight: 900;
-      letter-spacing: -3px;
-      background: linear-gradient(135deg, #fff 0%, var(--neon) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .price-currency { font-size: 36px; font-weight: 700; vertical-align: super; }
-    .price-desc { font-size: 15px; color: var(--muted); margin: 16px 0 36px; line-height: 1.6; }
-    .price-features { list-style: none; text-align: left; margin-bottom: 40px; display: flex; flex-direction: column; gap: 14px; }
-    .price-features li { display: flex; align-items: center; gap: 12px; font-size: 15px; }
-    .price-features li::before { content: '✓'; width: 22px; height: 22px; background: linear-gradient(135deg, var(--neon), var(--neon2)); color: #000; font-weight: 900; font-size: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tool-badge:hover { border-color:var(--purple); background:rgba(168,85,247,0.08); transform:translateY(-3px); }
+    .tool-badge .ico { font-size:24px; }
+    .tool-desc { font-size:13px; color:var(--muted); margin-top:2px; }
 
-    /* ── AUTHOR ── */
-    .author-card {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 40px;
-      backdrop-filter: blur(10px);
-      flex-wrap: wrap;
+    /* ─── RESULT ─── */
+    .result-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:20px;
     }
-    .author-avatar {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--neon), var(--neon2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      flex-shrink: 0;
-      box-shadow: 0 0 30px rgba(0,240,255,0.3);
+    .result-card {
+      background:var(--card); border:1px solid rgba(255,255,255,0.07);
+      border-radius:20px; padding:28px; text-align:center;
+      backdrop-filter:blur(10px);
+      transition:transform .2s;
     }
-    .author-name { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
-    .author-title { font-size: 14px; color: var(--neon); font-weight: 600; margin-bottom: 12px; }
-    .author-bio { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 600px; }
+    .result-card:hover { transform:translateY(-4px); }
+    .result-icon { font-size:36px; margin-bottom:16px; }
+    .result-card h4 { font-size:16px; font-weight:700; margin-bottom:8px; }
+    .result-card p { font-size:14px; color:var(--muted); line-height:1.6; }
 
-    /* ── FOOTER ── */
+    /* ─── PRICE ─── */
+    .price-center { display:flex; justify-content:center; }
+    .price-box {
+      max-width:500px; width:100%;
+      border-radius:32px; padding:3px;
+      background:linear-gradient(135deg,var(--neon),var(--purple),var(--pink));
+      box-shadow:0 0 80px rgba(0,245,255,0.15);
+    }
+    .price-inner {
+      background:#0a0a1a; border-radius:30px;
+      padding:52px 44px; text-align:center;
+    }
+    .price-tag { font-size:12px; letter-spacing:3px; color:var(--neon); text-transform:uppercase; font-weight:700; margin-bottom:12px; }
+    .price-big {
+      font-size:80px; font-weight:900; letter-spacing:-4px;
+      background:linear-gradient(135deg,#fff 0%,var(--neon) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      line-height:1;
+    }
+    .price-big sup { font-size:40px; vertical-align:super; }
+    .price-old { font-size:18px; color:var(--muted); text-decoration:line-through; margin:8px 0; }
+    .price-save {
+      display:inline-block;
+      background:rgba(0,245,255,0.1); border:1px solid rgba(0,245,255,0.2);
+      color:var(--neon); font-size:13px; font-weight:700;
+      padding:4px 14px; border-radius:100px; margin-bottom:28px;
+    }
+    .price-desc2 { font-size:15px; color:var(--muted); margin-bottom:32px; line-height:1.65; }
+    .checklist { list-style:none; text-align:left; margin-bottom:40px; display:flex; flex-direction:column; gap:14px; }
+    .checklist li { display:flex; align-items:center; gap:14px; font-size:15px; }
+    .check-ico {
+      width:24px; height:24px; flex-shrink:0; border-radius:50%;
+      background:linear-gradient(135deg,var(--neon),var(--purple));
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; color:#000; font-weight:900;
+    }
+    .cta-full {
+      display:flex; align-items:center; justify-content:center; gap:12px;
+      width:100%; background:linear-gradient(135deg,var(--neon),var(--purple));
+      color:#000; font-weight:800; font-size:18px;
+      padding:20px; border-radius:100px; text-decoration:none;
+      box-shadow:0 0 40px rgba(0,245,255,0.3);
+      transition:transform .2s, box-shadow .2s;
+    }
+    .cta-full:hover { transform:scale(1.03); box-shadow:0 0 70px rgba(0,245,255,0.5); }
+    .price-guarantee { font-size:13px; color:var(--muted); margin-top:20px; }
+    .price-guarantee span { color:var(--neon); }
+
+    /* ─── AUTHOR ─── */
+    .author-wrap {
+      display:grid; grid-template-columns:auto 1fr; gap:40px; align-items:center;
+      background:var(--card); border:1px solid var(--border);
+      border-radius:28px; padding:44px;
+      backdrop-filter:blur(12px);
+    }
+    @media(max-width:600px) { .author-wrap { grid-template-columns:1fr; } }
+    .author-ava {
+      width:100px; height:100px; border-radius:50%;
+      background:linear-gradient(135deg,var(--neon),var(--purple));
+      display:flex; align-items:center; justify-content:center;
+      font-size:40px;
+      box-shadow:0 0 40px rgba(168,85,247,0.4);
+    }
+    .author-name2 { font-size:26px; font-weight:900; letter-spacing:-.5px; margin-bottom:4px; }
+    .author-role { font-size:14px; color:var(--neon); font-weight:600; margin-bottom:14px; }
+    .author-text { font-size:16px; color:var(--muted); line-height:1.75; }
+    .author-text strong { color:var(--text); }
+
+    /* ─── FAQ ─── */
+    .faq-list { display:flex; flex-direction:column; gap:12px; max-width:800px; margin:0 auto; }
+    .faq-item {
+      background:var(--card); border:1px solid rgba(255,255,255,0.07);
+      border-radius:16px; overflow:hidden;
+      backdrop-filter:blur(10px);
+    }
+    .faq-q {
+      padding:20px 24px; cursor:pointer;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:16px; font-weight:600;
+      user-select:none;
+    }
+    .faq-q::after { content:'＋'; color:var(--neon); font-size:20px; transition:transform .3s; }
+    .faq-item.open .faq-q::after { transform:rotate(45deg); }
+    .faq-a {
+      max-height:0; overflow:hidden;
+      font-size:15px; color:var(--muted); line-height:1.7;
+      transition:max-height .4s ease, padding .3s;
+      padding:0 24px;
+    }
+    .faq-item.open .faq-a { max-height:200px; padding:0 24px 20px; }
+
+    /* ─── FINAL CTA ─── */
+    .final-cta-section {
+      background: radial-gradient(ellipse at 50% 50%, rgba(0,245,255,0.06) 0%, transparent 70%);
+      text-align:center;
+    }
+    .final-cta-section h2 {
+      font-size:clamp(32px,5vw,60px);
+      font-weight:900; letter-spacing:-2px; margin-bottom:20px;
+    }
+    .final-cta-section p { font-size:18px; color:var(--muted); margin-bottom:40px; }
+
+    /* ─── FOOTER ─── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 40px 0;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
+      border-top:1px solid var(--border); padding:36px 0;
+      text-align:center; font-size:14px; color:var(--muted);
     }
+    footer a { color:var(--neon); text-decoration:none; }
 
-    /* ── ANIMATIONS ── */
+    /* ─── SECTION HEADER ─── */
+    .sh { margin-bottom:56px; }
+    .sh-tag {
+      font-size:12px; font-weight:700; letter-spacing:3px;
+      color:var(--neon); text-transform:uppercase; margin-bottom:14px;
+    }
+    .sh h2 {
+      font-size:clamp(30px,4.5vw,52px);
+      font-weight:900; letter-spacing:-1.5px; line-height:1.1;
+      margin-bottom:16px;
+    }
+    .sh p { font-size:17px; color:var(--muted); max-width:560px; line-height:1.7; }
+    .center { text-align:center; }
+    .center .sh p { margin:0 auto; }
+
+    /* ─── ANIM ─── */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(32px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-    .fade-in {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ── FLOATING PARTICLES ── */
-    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-    .particle {
-      position: absolute;
-      width: 2px; height: 2px;
-      background: var(--neon);
-      border-radius: 50%;
-      animation: float linear infinite;
-      opacity: 0;
-    }
-    @keyframes float {
-      0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
-      10%  { opacity: 0.6; }
-      90%  { opacity: 0.6; }
-      100% { transform: translateY(-10vh) translateX(60px); opacity: 0; }
-    }
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-d1 { transition-delay:.1s; }
+    .reveal-d2 { transition-delay:.2s; }
+    .reveal-d3 { transition-delay:.3s; }
   </style>
 </head>
 <body>
 
-<!-- Stars background -->
+<div class="bg-fixed"><div class="bg-grid"></div></div>
+<div class="orb orb-tl"></div>
+<div class="orb orb-br"></div>
 <div id="stars"></div>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="particles" id="particles"></div>
 
 <!-- NAV -->
-<nav>
-  <div class="wrap">
-    <div class="logo">✦ AI Avatar Studio</div>
-    <a href="https://t.me/AIAvatarCourseBot" class="nav-cta">Получить доступ →</a>
+<nav class="z1">
+  <div class="inner">
+    <div class="logo">AI Avatar <span>Studio</span></div>
+    <a href="https://t.me/AIAvatarCourseBot" class="nav-btn">Купить за $18 →</a>
   </div>
 </nav>
 
 <!-- HERO -->
+<div class="z1">
 <div class="wrap">
-  <section class="hero">
-    <div class="badge">
-      <div class="badge-dot"></div>
-      Новый интенсив · 2025
-    </div>
-    <h1>
-      Создай своего<br>
-      <span class="glow">AI-аватара</span><br>
-      за один вечер
-    </h1>
-    <p>
-      Полный гайд по созданию реалистичного AI-видео аватара.
-      HeyGen, ElevenLabs, Adobe Podcast — всё в одном месте.
-    </p>
-    <div class="hero-actions">
-      <a href="https://t.me/AIAvatarCourseBot" class="btn-primary">
-        <span>🚀</span> Начать за $18
-      </a>
-      <a href="#lessons" class="btn-secondary">
-        <span>▶</span> Что внутри
-      </a>
-    </div>
-  </section>
-
-  <!-- STATS -->
-  <div class="stats-row fade-in">
-    <div class="stat">
-      <div class="stat-num">4</div>
-      <div class="stat-label">видео-урока</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">60+</div>
-      <div class="stat-label">минут контента</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">3</div>
-      <div class="stat-label">AI-инструмента</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">$18</div>
-      <div class="stat-label">разовая оплата</div>
-    </div>
+<section class="hero">
+  <div class="hero-badge">
+    <div class="live-dot"></div>
+    Новый интенсив · Доступен прямо сейчас
   </div>
-
-  <!-- LESSONS -->
-  <section class="section fade-in" id="lessons">
-    <div class="section-tag">Программа</div>
-    <h2>Что ты освоишь</h2>
-    <p class="sub">Четыре урока — от нуля до готового AI-аватара с профессиональной озвучкой.</p>
-
-    <div class="lessons-grid">
-      <div class="lesson-card">
-        <span class="lesson-icon">🎬</span>
-        <div class="lesson-num">Введение</div>
-        <h3>Добро пожаловать</h3>
-        <p>Обзор курса, что тебя ждёт и как получить максимум за минимальное время.</p>
-        <div class="lesson-time">⚡ Сразу после оплаты</div>
-      </div>
-      <div class="lesson-card">
-        <span class="lesson-icon">🤖</span>
-        <div class="lesson-num">Урок 1</div>
-        <h3>AI-аватар из видео</h3>
-        <p>Создаём реалистичный клон через HeyGen. Загружаем видео — получаем цифрового себя.</p>
-        <div class="lesson-time">⚡ Сразу после оплаты</div>
-      </div>
-      <div class="lesson-card">
-        <span class="lesson-icon">🖼</span>
-        <div class="lesson-num">Урок 2</div>
-        <h3>AI-аватар из фото</h3>
-        <p>Нет видео? Не проблема. Создаём говорящего аватара из одной фотографии.</p>
-        <div class="lesson-time">🕐 Через 30 минут</div>
-      </div>
-      <div class="lesson-card">
-        <span class="lesson-icon">🎙</span>
-        <div class="lesson-num">Урок 3</div>
-        <h3>Профессиональная озвучка</h3>
-        <p>ElevenLabs + Adobe Podcast. Твой голос звучит как из студии — убираем шум, клонируем голос.</p>
-        <div class="lesson-time">🕐 Через 60 минут</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TOOLS -->
-  <section class="section fade-in">
-    <div class="section-tag">Инструменты</div>
-    <h2>Технологии будущего</h2>
-    <p class="sub">Только топовые AI-инструменты, которые используют профессионалы.</p>
-    <div class="tools-grid">
-      <div class="tool-pill"><span>🎥</span> HeyGen</div>
-      <div class="tool-pill"><span>🔊</span> ElevenLabs</div>
-      <div class="tool-pill"><span>🎙</span> Adobe Podcast</div>
-      <div class="tool-pill"><span>🤖</span> AI Video Generation</div>
-      <div class="tool-pill"><span>🖼</span> Photo-to-Avatar</div>
-      <div class="tool-pill"><span>✨</span> Voice Cloning</div>
-    </div>
-  </section>
-
-  <!-- PRICE -->
-  <section class="section fade-in" id="pricing">
-    <div class="section-tag">Стоимость</div>
-    <h2 style="text-align:center; margin-bottom: 48px;">Один раз — навсегда</h2>
-    <div class="price-wrap">
-      <div class="price-card">
-        <div class="price-label">Полный доступ</div>
-        <div class="price-amount"><span class="price-currency">$</span>18</div>
-        <p class="price-desc">Разовая оплата. Никаких подписок. Доступ к урокам навсегда.</p>
-        <ul class="price-features">
-          <li>Вводный урок сразу после оплаты</li>
-          <li>Урок 1 — AI-аватар из видео (HeyGen)</li>
-          <li>Урок 2 — AI-аватар из фото</li>
-          <li>Урок 3 — Профессиональная озвучка</li>
-          <li>Доступ навсегда</li>
-        </ul>
-        <a href="https://t.me/AIAvatarCourseBot" class="btn-primary" style="width:100%; justify-content:center; display:flex;">
-          🚀 Купить за $18
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- AUTHOR -->
-  <section class="section fade-in">
-    <div class="section-tag">Автор</div>
-    <h2 style="margin-bottom: 32px;">Кто ведёт курс</h2>
-    <div class="author-card">
-      <div class="author-avatar">👩‍💻</div>
-      <div>
-        <div class="author-name">Настя</div>
-        <div class="author-title">AI Content Creator & Educator</div>
-        <p class="author-bio">
-          Практик AI-контента с опытом создания видео-аватаров и автоматизации контент-машин.
-          Делюсь только проверенными инструментами, которые использую сама каждый день.
-        </p>
-      </div>
-    </div>
-  </section>
+  <h1>Создай своего<br><em>AI-аватара</em><br>за один вечер</h1>
+  <p class="hero-sub">
+    Реалистичный цифровой клон себя — <strong>без студии, без оператора</strong>.<br>
+    Полный гайд: от нуля до готового AI-видео аватара с профессиональной озвучкой.
+  </p>
+  <div class="hero-cta-row">
+    <a href="https://t.me/AIAvatarCourseBot" class="cta-main">🚀 Получить доступ за $18</a>
+    <a href="#program" class="cta-ghost">▶ Смотреть программу</a>
+  </div>
+  <p class="hero-note">
+    <span>✓</span> Уроки сразу после оплаты &nbsp;·&nbsp;
+    <span>✓</span> Разовая оплата &nbsp;·&nbsp;
+    <span>✓</span> Доступ навсегда
+  </p>
+</section>
 </div>
 
-<!-- FOOTER -->
-<footer>
+<!-- PROOF BAR -->
+<div class="proof-bar z1">
+  <div class="proof-inner">
+    <div class="proof-item"><div class="proof-num">4</div><div class="proof-label">Видео-урока</div></div>
+    <div class="proof-item"><div class="proof-num">60+</div><div class="proof-label">Минут практики</div></div>
+    <div class="proof-item"><div class="proof-num">3</div><div class="proof-label">AI-инструмента</div></div>
+    <div class="proof-item"><div class="proof-num">$18</div><div class="proof-label">Разовая оплата</div></div>
+    <div class="proof-item"><div class="proof-num">∞</div><div class="proof-label">Доступ навсегда</div></div>
+  </div>
+</div>
+
+<!-- HOOK: для кого -->
+<div class="wrap">
+<section>
+  <div class="sh reveal"><div class="sh-tag">Для кого</div><h2>Ты тратишь часы на контент?</h2></div>
+  <div class="hook-grid">
+    <div class="hook-card reveal reveal-d1">
+      <span class="emoji">😩</span>
+      <h3>Нет времени на съёмку</h3>
+      <p>Каждое видео — это свет, камера, дубли, монтаж. AI-аватар делает это за тебя за минуты.</p>
+    </div>
+    <div class="hook-card reveal reveal-d2">
+      <span class="emoji">🎙</span>
+      <h3>Плохой звук убивает доверие</h3>
+      <p>Фоновый шум, эхо, дешёвый микрофон. ElevenLabs + Adobe Podcast дают студийный звук бесплатно.</p>
+    </div>
+    <div class="hook-card reveal reveal-d3">
+      <span class="emoji">🤯</span>
+      <h3>Не знаешь с чего начать</h3>
+      <p>Десятки AI-инструментов, никто не объясняет. Этот курс — конкретный пошаговый план, без воды.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section id="program">
+  <div class="sh center reveal"><div class="sh-tag">Программа</div><h2>4 урока — всё что нужно</h2><p>От знакомства до готового аватара с профессиональной озвучкой.</p></div>
+  <div class="get-grid">
+    <div class="get-card reveal reveal-d1">
+      <div class="get-num">Вступление</div>
+      <span class="get-icon">🎬</span>
+      <h3>Добро пожаловать</h3>
+      <p>Обзор всего интенсива. Что тебя ждёт, какие инструменты понадобятся и как получить максимум за минимальное время.</p>
+      <span class="get-tag">⚡ Сразу после оплаты</span>
+    </div>
+    <div class="get-card reveal reveal-d2">
+      <div class="get-num">Урок 1</div>
+      <span class="get-icon">🤖</span>
+      <h3>AI-аватар из видео</h3>
+      <p>Создаём реалистичного цифрового клона через HeyGen. Снимаешь короткое видео — получаешь аватара, который говорит что угодно.</p>
+      <span class="get-tag">⚡ Сразу после оплаты</span>
+    </div>
+    <div class="get-card reveal reveal-d1">
+      <div class="get-num">Урок 2</div>
+      <span class="get-icon">🖼</span>
+      <h3>AI-аватар из фото</h3>
+      <p>Нет видео? Не проблема. Одна фотография — и у тебя полноценный говорящий аватар. Идеально для тех, кто не хочет попасть в кадр.</p>
+      <span class="get-tag purple">🕐 Через 30 минут</span>
+    </div>
+    <div class="get-card reveal reveal-d2">
+      <div class="get-num">Урок 3</div>
+      <span class="get-icon">🎙</span>
+      <h3>Профессиональная озвучка</h3>
+      <p>ElevenLabs для клонирования голоса + Adobe Podcast для чистки звука. Убираем шум, эхо и всё лишнее — звук как из студии.</p>
+      <span class="get-tag purple">🕐 Через 60 минут</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="sh center reveal"><div class="sh-tag">Как это работает</div><h2>Три шага до аватара</h2></div>
+  <div class="steps">
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Оплачиваешь один раз</h3>
+        <p>$18 — разовая оплата. Нажимаешь кнопку, платишь картой или Google Pay, и уже через секунду у тебя есть доступ.</p>
+      </div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Получаешь уроки автоматически</h3>
+        <p>Вступление + Урок 1 сразу. Урок 2 — через 30 минут. Урок 3 — через час. Всё приходит прямо в Telegram — никаких кабинетов и паролей.</p>
+      </div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Делаешь и запускаешь</h3>
+        <p>Следуй инструкциям — и к утру у тебя готовый AI-аватар. Используй для рилс, курсов, YouTube, TikTok — где угодно.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section>
+  <div class="sh reveal"><div class="sh-tag">Инструменты</div><h2>Только топовые AI-инструменты</h2><p>Те самые, которые используют профессионалы в 2025 году.</p></div>
+  <div class="tools-flex">
+    <div class="tool-badge reveal reveal-d1">
+      <span class="ico">🎥</span>
+      <div><div>HeyGen</div><div class="tool-desc">AI видео-аватары</div></div>
+    </div>
+    <div class="tool-badge reveal reveal-d2">
+      <span class="ico">🔊</span>
+      <div><div>ElevenLabs</div><div class="tool-desc">Клонирование голоса</div></div>
+    </div>
+    <div class="tool-badge reveal reveal-d3">
+      <span class="ico">🎙</span>
+      <div><div>Adobe Podcast</div><div class="tool-desc">Студийный звук бесплатно</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section>
+  <div class="sh center reveal"><div class="sh-tag">Результат</div><h2>Что ты получишь на выходе</h2></div>
+  <div class="result-grid">
+    <div class="result-card reveal reveal-d1">
+      <div class="result-icon">🤖</div>
+      <h4>Цифровой клон</h4>
+      <p>Реалистичный AI-аватар из видео, который говорит любой текст</p>
+    </div>
+    <div class="result-card reveal reveal-d2">
+      <div class="result-icon">🖼</div>
+      <h4>Аватар из фото</h4>
+      <p>Говорящий персонаж из одной фотографии — без съёмки</p>
+    </div>
+    <div class="result-card reveal reveal-d3">
+      <div class="result-icon">🎙</div>
+      <h4>Студийный голос</h4>
+      <p>Клон твоего голоса + чистый звук без шума и эха</p>
+    </div>
+    <div class="result-card reveal">
+      <div class="result-icon">⚡</div>
+      <h4>Автоматизация контента</h4>
+      <p>Создавай видео без камеры и микрофона — бесконечно</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE -->
+<section id="pricing">
+  <div class="sh center reveal"><div class="sh-tag">Стоимость</div><h2>Один раз — навсегда</h2></div>
+  <div class="price-center reveal">
+    <div class="price-box">
+      <div class="price-inner">
+        <div class="price-tag">Полный доступ</div>
+        <div class="price-big"><sup>$</sup>18</div>
+        <div class="price-old">обычно $97</div>
+        <div class="price-save">🔥 Сэкономь $79 сегодня</div>
+        <p class="price-desc2">Разовая оплата. Никаких подписок.<br>Все 4 урока навсегда в Telegram.</p>
+        <ul class="checklist">
+          <li><div class="check-ico">✓</div>Вводный урок сразу после оплаты</li>
+          <li><div class="check-ico">✓</div>Урок 1 — AI-аватар из видео (HeyGen)</li>
+          <li><div class="check-ico">✓</div>Урок 2 — AI-аватар из фото</li>
+          <li><div class="check-ico">✓</div>Урок 3 — Озвучка (ElevenLabs + Adobe)</li>
+          <li><div class="check-ico">✓</div>Доступ в Telegram-боте навсегда</li>
+          <li><div class="check-ico">✓</div>Работает из любой страны мира</li>
+        </ul>
+        <a href="https://t.me/AIAvatarCourseBot" class="cta-full">🚀 Купить за $18 — старт сейчас</a>
+        <p class="price-guarantee">🔒 Безопасная оплата · <span>Visa, Mastercard, Google Pay</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHOR -->
+<section>
+  <div class="sh reveal"><div class="sh-tag">Автор</div><h2>Кто ведёт</h2></div>
+  <div class="author-wrap reveal">
+    <div class="author-ava">👩‍💻</div>
+    <div>
+      <div class="author-name2">Настя</div>
+      <div class="author-role">AI Content Creator · Educator</div>
+      <p class="author-text">
+        Практик AI-контента, который создаёт и использует аватаров в своей работе каждый день.
+        <strong>Никакой теории — только то, что работает прямо сейчас.</strong>
+        Прошла путь от "не знаю с чего начать" до автоматизированной контент-машины за один вечер.
+        Теперь делюсь этим с тобой.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="sh center reveal"><div class="sh-tag">FAQ</div><h2>Частые вопросы</h2></div>
+  <div class="faq-list">
+    <div class="faq-item reveal"><div class="faq-q">Нужен ли опыт в AI или видеомонтаже?</div><div class="faq-a">Нет. Курс создан для тех, кто ничего не знает об AI. Всё объясняется с нуля, пошагово.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">Когда я получу уроки?</div><div class="faq-a">Вступление и Урок 1 — сразу после оплаты. Урок 2 — через 30 минут. Урок 3 — через 60 минут. Всё автоматически в Telegram.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">HeyGen платный?</div><div class="faq-a">HeyGen даёт бесплатный тариф для тестирования. В курсе покажем как выжать максимум из бесплатной версии, прежде чем платить.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">Как долго у меня будет доступ?</div><div class="faq-a">Навсегда. Оплатил один раз — доступ в боте не истекает.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">Работает ли это в моей стране?</div><div class="faq-a">Да, курс работает в любой стране. Оплата через Stripe — принимает карты со всего мира.</div></div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta-section">
+  <div class="sh center reveal">
+    <h2>Готов создать своего<br><em style="background:linear-gradient(135deg,var(--neon),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:normal;">AI-аватара?</em></h2>
+    <p>Один вечер — и у тебя автоматизированная контент-машина.</p>
+  </div>
+  <div style="display:flex;justify-content:center;" class="reveal">
+    <a href="https://t.me/AIAvatarCourseBot" class="cta-main">🚀 Начать за $18 — прямо сейчас</a>
+  </div>
+  <p style="text-align:center;margin-top:20px;font-size:14px;color:var(--muted);" class="reveal">Уроки в Telegram · Разовая оплата · Без подписок</p>
+</section>
+
+</div><!-- /wrap -->
+</div><!-- /z1 -->
+
+<footer class="z1">
   <div class="wrap">
-    <p>© 2025 AI Avatar Studio · <a href="https://t.me/AIAvatarCourseBot" style="color: var(--neon); text-decoration: none;">@AIAvatarCourseBot</a></p>
+    <p>© 2025 AI Avatar Studio &nbsp;·&nbsp; <a href="https://t.me/AIAvatarCourseBot">@AIAvatarCourseBot</a> &nbsp;·&nbsp; Все права защищены</p>
   </div>
 </footer>
 
 <script>
-  // Generate stars
-  const starsEl = document.getElementById('stars');
-  for (let i = 0; i < 200; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 2 + 0.5;
-    s.style.cssText = `
-      width: ${size}px; height: ${size}px;
-      left: ${Math.random() * 100}%;
-      top: ${Math.random() * 100}%;
-      animation-duration: ${Math.random() * 4 + 2}s;
-      animation-delay: ${Math.random() * 5}s;
-    `;
-    starsEl.appendChild(s);
-  }
+// Stars
+const sc = document.getElementById('stars');
+for(let i=0;i<180;i++){
+  const s=document.createElement('div'); s.className='star';
+  const sz=Math.random()*1.8+0.4;
+  s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${Math.random()*4+2}s;animation-delay:${Math.random()*6}s;`;
+  sc.appendChild(s);
+}
 
-  // Generate particles
-  const particlesEl = document.getElementById('particles');
-  for (let i = 0; i < 30; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.cssText = `
-      left: ${Math.random() * 100}%;
-      animation-duration: ${Math.random() * 10 + 8}s;
-      animation-delay: ${Math.random() * 10}s;
-      width: ${Math.random() < 0.3 ? 3 : 2}px;
-      height: ${Math.random() < 0.3 ? 3 : 2}px;
-      background: ${Math.random() < 0.5 ? 'var(--neon)' : 'var(--neon2)'};
-    `;
-    particlesEl.appendChild(p);
-  }
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-  // Scroll animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement;
+    document.querySelectorAll('.faq-item.open').forEach(o=>{ if(o!==item) o.classList.remove('open'); });
+    item.classList.toggle('open');
+  });
+});
 </script>
 </body>
 </html>
